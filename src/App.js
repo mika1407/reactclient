@@ -1,20 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
 
 function App() {
+  const [posts, setPosts] = useState();
+
+  function getPosts() {
+    const url = 'https://localhost:7017/get-all-posts';
+
+    fetch(url, {
+      methot: 'GET'
+    })
+      .then(response => response.json())
+      .then(postsFromServer => {
+        console.log(postsFromServer);
+        setPosts(postsFromServer);
+      })
+      .catch((error) => {
+        console.log(error);
+        alert(error);
+      });
+  }
+
   return (
     <div className="container">
       <div className="row min-vh-100">
         <div className="col d-flex flex-column justify-content-center align-items-center">
-          <h1>Hello Bootstrap!</h1>
+          <div>
+            <h1>ASP.NET Core React</h1>
+
+            <div className="mt-5">
+              <button onClick={getPosts} className="btn btn-dark btn-lg w-100">Get Posts from Server</button>
+              <button onClick={() => {}} className="btn btn-secondary btn-lg w-100 mt-4">Create New Post</button>
+            </div>
+          </div>
 
           {renderPostsTable()}
         </div>
-      </div>      
+      </div>
     </div>
   );
 }
 
-function renderPostsTable(){
+function renderPostsTable() {
   return (
     <div className="table-responsive mt-5">
       <table className="table table-bordered border-dark">

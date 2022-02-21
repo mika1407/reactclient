@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import Constants from "./utilities/Constants";
+import PostCreateForm from "./components/PostCreateForm";
 
-function App() {
+export default function App() {
   const [posts, setPosts] = useState([]);
+  const [showingCreateNewPostForm, setShowingCreateNewPostForm] = useState(false);
 
   function getPosts() {
     const url = Constants.API_URL_GET_ALL_POSTS;
@@ -12,7 +14,6 @@ function App() {
     })
       .then(response => response.json())
       .then(postsFromServer => {
-        // console.log(postsFromServer);
         setPosts(postsFromServer);
       })
       .catch((error) => {
@@ -25,16 +26,20 @@ function App() {
     <div className="container">
       <div className="row min-vh-100">
         <div className="col d-flex flex-column justify-content-center align-items-center">
-          <div>
-            <h1>ASP.NET Core React</h1>
+          {showingCreateNewPostForm === false && (
+            <div>
+              <h1>ASP.NET Core React</h1>
 
-            <div className="mt-5">
-              <button onClick={getPosts} className="btn btn-dark btn-lg w-100">Get Posts from Server</button>
-              <button onClick={() => { }} className="btn btn-secondary btn-lg w-100 mt-4">Create New Post</button>
+              <div className="mt-5">
+                <button onClick={getPosts} className="btn btn-dark btn-lg w-100">Get Posts from Server</button>
+                <button onClick={() => setShowingCreateNewPostForm(true)} className="btn btn-secondary btn-lg w-100 mt-4">Create New Post</button>
+              </div>
             </div>
-          </div>
+          )}
 
-          {posts.length > 0 && renderPostsTable()}
+          {(posts.length > 0 && showingCreateNewPostForm === false) && renderPostsTable()}
+
+          {showingCreateNewPostForm && <PostCreateForm onPostCreated={onPostCreated} />}
         </div>
       </div>
     </div>
@@ -72,6 +77,18 @@ function App() {
       </div>
     );
   }
+
+  function onPostCreated(createdPost) {
+    setShowingCreateNewPostForm(false);
+
+    if (createdPost === null) {
+      return;
+    }
+
+    alert(`Post successfully created. After clicking OK, your new post titled "${createdPost.title}" will show up in the table below.`);
+
+    getPosts();
+  }
 }
 
-export default App;
+
